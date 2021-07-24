@@ -1,3 +1,1 @@
-# Practice-problems
-These are some practice problems
-1. Single player Tic Tac Toe
+##Single player Tic-Tac-Toe game built using C++.
