@@ -10,45 +10,58 @@ using namespace std;
 char selection='o';
 char comp='x';
 string pre_selection;
+
 void rules();
+void display(char[9]);
 char player_choice();
 char computer_choice();
 int user_turn(char[9]);
-void player_display(char[9]);
 int computer_turn(char[9],string);
-int minimax(char[9],int,bool,int&);
-void computer_display(char[9]);
-int check_winner(char[9]);
-void match_result(int value);
-void display(char[9]);
-int easy(char[9]);
-int medium(char[9]);
 int random(char[9]);
 int easy_move(char[9]);
+int easy(char[9]);
+int medium(char[9]);
+int minimax(char[9],int,bool,int&);
+int check_winner(char[9]);
+void match_result(int value);
 
 int main(){
 	rules();
 	selection=player_choice();
 	comp=computer_choice();
 	string level{};
-	cout<<"\nSelect difficulty level(Easy/Medium/Hard): ";
-		do{
-			cin>>level;
-			transform(level.begin(),level.end(),level.begin(),::tolower);
-			if(level!="easy" && level!="medium" && level!="hard")
-				cout<<"Invalid input-try again\n";
-		}while(level!="easy" && level!="medium" && level!="hard");
+	cout<<"\nSelect difficulty level(1 or Easy/2 or Medium/3 or Hard): ";
+    do{
+        cin>>level;
+        transform(level.begin(),level.end(),level.begin(),::tolower);
+        if(level!="easy" && level!="medium" && level!="hard"
+                && level!="1" && level!="2" && level!="3")
+            cout<<"Invalid input-try again\n";
+    }while(level!="easy" && level!="medium" && level!="hard"
+                    && level!="1" && level!="2" && level!="3");
+    
+    if(level == "1"){
+        level = "easy";
+    }
+    else if(level == "2"){
+        level = "medium";
+    }
+    else if(level == "3"){
+        level = "hard";
+    }
 	system("cls");
 	cout<<"Here we go!!!!"<<endl<<endl;
+    
 	int move{};
 	int k{};
-char moves[9]{' ',' ',' ',' ',' ',' ',' ',' ',' '};
+    char moves[9]{' ',' ',' ',' ',' ',' ',' ',' ',' '};
 	int value{2};
+    display(moves);
 	while(k<9 && value>1){
 		move=user_turn(moves);
 		system("cls");
 		moves[move-1]=selection;
-		player_display(moves);
+		display(moves);
 		++k;
 		if(k>=4){
 			value=check_winner(moves);
@@ -58,7 +71,7 @@ char moves[9]{' ',' ',' ',' ',' ',' ',' ',' ',' '};
 			system("cls");
 			move=computer_turn(moves,level);
 			moves[move]=comp;
-			computer_display(moves);
+			display(moves);
 			++k;
 			if(k>=4){
 				value=check_winner(moves);
@@ -68,18 +81,23 @@ char moves[9]{' ',' ',' ',' ',' ',' ',' ',' ',' '};
 	this_thread::sleep_for(0.2s);	
 	match_result(value);
 	cout << endl;
-	cout<<"\nWant to play again?(Yes/No) ";
 	string ch{};
-	cin>>ch;
-	transform(ch.begin(),ch.end(),ch.begin(),::tolower);
-	if(ch=="yes"){
+	do{
+	    cout<<"\nDo you want to play again?(Yes/No) ";
+        cin>>ch;
+        transform(ch.begin(),ch.end(),ch.begin(),::tolower);
+        if(ch=="yes"){
 		system("cls");
 		main();
-	}
-	else{
-		cout<<"Good Bye"<<endl;
-		return 0;
-	}
+        }
+        else if(ch == "no"){
+            cout<<"Good Bye"<<endl;
+            return 0;
+        }
+        else{
+            cout << "Sorry! Didn't understand." << endl;
+        }
+    }while(ch != "yes" && ch != "no");
 //	return 0;
 }
 void rules(){
@@ -91,6 +109,22 @@ void rules(){
 	cout<<"First tou are required to select the letter with which you want to play - X or O"<<endl
 		<<"You are supposed to enter a number which will be the position where you want to insert the letter"<<endl
 		<<"The player who gets 3 consecutive Xs or Os(horizontally, vertically or diagonally) wins"<<endl;
+}
+void display(char sequence[9]){
+	for(int i{1};i<=9;++i){
+		if(i%3==0 && i!=9){
+			cout<<"_________|_________|_________"<<endl;
+		}
+		else if(i%3!=0 && (i+1)%3!=0){
+			cout<<"	 |	   |	"<<endl;
+		}
+		else if(i%3!=0 && (i+1)%3==0){
+			cout<<"    "<<sequence[i-2]<<"    |    "<<sequence[i-1]<<"    |    "<<sequence[i]<<"    "<<endl;
+		}
+		if(i==9){
+			cout<<"	 |	   |	 ";
+		}
+	}cout<<endl;
 }
 char player_choice(){
 	char choice;
@@ -137,10 +171,6 @@ int user_turn(char turns[9]){
 		}while(turns[turn-1]!=' ');
 		return turn;
 }
-void player_display(char turns[9]){
-	display(turns);
-//	cout<<"================================"<<endl<<endl;
-}
 int computer_turn(char turns[9], string difficulty){
 	if(difficulty=="easy"){
 		return easy(turns);
@@ -182,106 +212,6 @@ int computer_turn(char turns[9], string difficulty){
 	}
 	
 }
-int minimax(char turns[9],int depth,bool isMin,int& c){
-	int score=check_winner(turns);
-	if(score==1){
-		return 1;
-	}
-	if(score==-1){
-		return -1;
-	}
-	if(score==0){
-		return 0;
-	}
-	if(isMin){
-		int best=1000;
-		for(int i{};i<9;++i){
-			if(turns[i]==' '){
-				turns[i]=comp;
-				best=min(best,minimax(turns,depth+1,!isMin,c));
-				turns[i]=' ';
-			}
-		}
-		++c;
-		return best;
-	}
-	else{
-		int best=-1000;
-		for(int i{};i<9;++i){
-			if(turns[i]==' '){
-				turns[i]=selection;
-				best=max(best,minimax(turns,depth+1,!isMin,c));
-				turns[i]=' ';
-			}
-		}
-		++c;
-		return best;
-	}
-}
-void computer_display(char turns[9]){
-	display(turns);
-}
-int check_winner(char turns[9]){
-	if((turns[0]==selection && turns[4]==selection && turns[8]==selection) || (turns[2]==selection && turns[4]==selection && turns[6]==selection)){
-		return 1;
-	}
-	if((turns[0]==comp && turns[4]==comp && turns[8]==comp) || (turns[2]==comp && turns[4]==comp && turns[6]==comp)){
-		return -1;
-	}
-	for(int j{};j<9;j+=3){
-		if(turns[j]==selection && turns[j+1]==selection && turns[j+2]==selection){
-			return 1;
-		}
-		if(turns[j]==comp && turns[j+1]==comp && turns[j+2]==comp){
-			return -1;
-		}
-	}
-	for(int j{};j<3;++j){
-		if(turns[j]==selection && turns[j+3]==selection && turns[j+6]==selection){
-			return 1;
-		}
-		if(turns[j]==comp && turns[j+3]==comp && turns[j+6]==comp){
-			return -1;
-		}
-	}
-	for(int i{};i<9;++i){
-		int count{};
-		if(turns[i]==' '){
-			++count;
-		}
-		if(count>0){
-			return count+5;
-		}
-	}
-	return 0;
-}
-void match_result(int value){
-	if(value==1){
-		cout<<"YOU WIN";
-	}
-	else if(value==-1){
-		cout<<"YOU LOSE";
-	}
-	else{
-		cout<<"TIE";
-	}
-}
-void display(char sequence[9]){
-	for(int i{1};i<=9;++i){
-		if(i%3==0 && i!=9){
-			cout<<"_________|_________|_________"<<endl;
-		}
-		else if(i%3!=0 && (i+1)%3!=0){
-			cout<<"	 |	   |	"<<endl;
-		}
-		else if(i%3!=0 && (i+1)%3==0){
-			cout<<"    "<<sequence[i-2]<<"    |    "<<sequence[i-1]<<"    |    "<<sequence[i]<<"    "<<endl;
-		}
-		if(i==9){
-			cout<<"	 |	   |	 ";
-		}
-	}cout<<endl;
-}
 int random(char turn[9]){
 	int move{};
 	do{
@@ -291,120 +221,120 @@ int random(char turn[9]){
 	return move;
 }
 int easy_move(char turn[9]){
-	int pcount{};
-	int ccount{};
+	int playerCount{};
+	int computerCount{};
 	for(int i{};i<9;i+=3){
 		for(int j{};j<3;++j){
 			if(turn[i+j]==comp){
-				++ccount;
+				++computerCount;
 			}
 		}
-		if(ccount==2){
+		if(computerCount==2){
 			for(int j{};j<3;++j){
 				if(turn[i+j]==' '){
 					return i+j;
 				}
 			}
 		}
-		ccount=0;
+		computerCount=0;
 	}
 	for(int i{};i<3;++i){
 		for(int j{};j<3;++j){
 			if(turn[i+(3*j)]==comp){
-				++ccount;
+				++computerCount;
 			}
 		}
-		if(ccount==2){
+		if(computerCount==2){
 			for(int j{};j<3;++j){
 				if(turn[i+(3*j)]==' '){
 					return i+(3*j);
 				}
 			}
 		}
-		ccount=0;
+		computerCount=0;
 	}
 	for(int i{2};i<=6;i+=2){
 		if(turn[i]==comp){
-			++ccount;
+			++computerCount;
 		}
 	}
-	if(ccount==2){
+	if(computerCount==2){
 		for(int i{2};i<=6;i+=2){
 			if(turn[i]==' '){
 				return i;
 			}
 		}
 	}
-	ccount=0;
+	computerCount=0;
 	for(int i{};i<=9;i+=4){
 		if(turn[i]==comp){
-			++ccount;
+			++computerCount;
 		}
 	}
-	if(ccount==2){
+	if(computerCount==2){
 		for(int i{};i<=9;i+=4){
 			if(turn[i]==' '){
 				return i;
 			}
 		}
 	}
-	ccount=0;
+	computerCount=0;
 	for(int i{};i<9;i+=3){
 		for(int j{};j<3;++j){
 			if(turn[i+j]==selection){
-				++pcount;
+				++playerCount;
 			}
 		}
-		if(pcount==2){
+		if(playerCount==2){
 			for(int j{};j<3;++j){
 				if(turn[i+j]==' '){
 					return i+j;
 				}
 			}
 		}
-		pcount=0;
+		playerCount=0;
 	}
 	for(int i{};i<3;++i){
 		for(int j{};j<3;++j){
 			if(turn[i+(3*j)]==selection){
-				++pcount;
+				++playerCount;
 			}
 		}
-		if(pcount==2){
+		if(playerCount==2){
 			for(int j{};j<3;++j){
 				if(turn[i+(3*j)]==' '){
 					return i+(3*j);
 				}
 			}
 		}
-		pcount=0;
+		playerCount=0;
 	}
 	for(int i{2};i<=6;i+=2){
 		if(turn[i]==selection){
-			++pcount;
+			++playerCount;
 		}
 	}
-	if(pcount==2){
+	if(playerCount==2){
 		for(int i{2};i<=6;i+=2){
 			if(turn[i]==' '){
 				return i;
 			}
 		}
 	}
-	pcount=0;
+	playerCount=0;
 	for(int i{};i<=9;i+=4){
 		if(turn[i]==selection){
-			++pcount;
+			++playerCount;
 		}
 	}
-	if(pcount==2){
+	if(playerCount==2){
 		for(int i{};i<=9;i+=4){
 			if(turn[i]==' '){
 				return i;
 			}
 		}
 	}
-	pcount=0;
+	playerCount=0;
 	return -1;
 }
 int easy(char turn[9]){
@@ -494,5 +424,86 @@ int medium(char turn[9]){
 	}
 	else{
 		return move;
+	}
+}
+int minimax(char turns[9],int depth,bool isMin,int& c){
+	int score=check_winner(turns);
+	if(score==1){
+		return 1;
+	}
+	if(score==-1){
+		return -1;
+	}
+	if(score==0){
+		return 0;
+	}
+	if(isMin){
+		int best=1000;
+		for(int i{};i<9;++i){
+			if(turns[i]==' '){
+				turns[i]=comp;
+				best=min(best,minimax(turns,depth+1,!isMin,c));
+				turns[i]=' ';
+			}
+		}
+		++c;
+		return best;
+	}
+	else{
+		int best=-1000;
+		for(int i{};i<9;++i){
+			if(turns[i]==' '){
+				turns[i]=selection;
+				best=max(best,minimax(turns,depth+1,!isMin,c));
+				turns[i]=' ';
+			}
+		}
+		++c;
+		return best;
+	}
+}
+int check_winner(char turns[9]){
+	if((turns[0]==selection && turns[4]==selection && turns[8]==selection) || (turns[2]==selection && turns[4]==selection && turns[6]==selection)){
+		return 1;
+	}
+	if((turns[0]==comp && turns[4]==comp && turns[8]==comp) || (turns[2]==comp && turns[4]==comp && turns[6]==comp)){
+		return -1;
+	}
+	for(int j{};j<9;j+=3){
+		if(turns[j]==selection && turns[j+1]==selection && turns[j+2]==selection){
+			return 1;
+		}
+		if(turns[j]==comp && turns[j+1]==comp && turns[j+2]==comp){
+			return -1;
+		}
+	}
+	for(int j{};j<3;++j){
+		if(turns[j]==selection && turns[j+3]==selection && turns[j+6]==selection){
+			return 1;
+		}
+		if(turns[j]==comp && turns[j+3]==comp && turns[j+6]==comp){
+			return -1;
+		}
+	}
+	for(int i{};i<9;++i){
+		int count{};
+		if(turns[i]==' '){
+			++count;
+		}
+		if(count>0){
+			return count+5;
+		}
+	}
+	return 0;
+}
+void match_result(int value){
+	if(value==1){
+		cout<<"YOU WIN";
+	}
+	else if(value==-1){
+		cout<<"YOU LOSE";
+	}
+	else{
+		cout<<"TIE";
 	}
 }
