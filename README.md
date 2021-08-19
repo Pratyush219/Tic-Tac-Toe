@@ -1,1 +1,1 @@
-##Single player Tic-Tac-Toe game built using C++.
+I built a single-player tic-tac-toe game.
