@@ -11,6 +11,7 @@ char selection='o';
 char comp='x';
 string pre_selection;
 
+void clear_screen();
 void rules();
 void display(char[9]);
 char player_choice();
@@ -49,7 +50,7 @@ int main(){
     else if(level == "3"){
         level = "hard";
     }
-	system("cls");
+	clear_screen();
 	cout<<"Here we go!!!!"<<endl<<endl;
     
 	int move{};
@@ -59,7 +60,7 @@ int main(){
     display(moves);
 	while(k<9 && value>1){
 		move=user_turn(moves);
-		system("cls");
+		clear_screen();
 		moves[move-1]=selection;
 		display(moves);
 		++k;
@@ -68,7 +69,7 @@ int main(){
 		}
 		if(k<9 && value>1){
 			this_thread::sleep_for(0.6s);
-			system("cls");
+			clear_screen();
 			move=computer_turn(moves,level);
 			moves[move]=comp;
 			display(moves);
@@ -87,7 +88,7 @@ int main(){
         cin>>ch;
         transform(ch.begin(),ch.end(),ch.begin(),::tolower);
         if(ch=="yes"){
-		system("cls");
+		clear_screen();
 		main();
         }
         else if(ch == "no"){
@@ -507,3 +508,4 @@ void match_result(int value){
 		cout<<"TIE";
 	}
 }
+
