@@ -106,8 +106,8 @@ void rules(){
 	cout<<"Rules :-"<<endl
 		<<"The grid is numbered as follows:"<<endl;
 	display(arr);
-	cout<<"First tou are required to select the letter with which you want to play - X or O"<<endl
-		<<"You are supposed to enter a number which will be the position where you want to insert the letter"<<endl
+	cout<<"First, you are required to select the letter with which you want to play - X or O"<<endl
+		<<"You are supposed to enter a number which will be the position where you want to insert the letter (The cells and their corresponding positions are shown above)"<<endl
 		<<"The player who gets 3 consecutive Xs or Os(horizontally, vertically or diagonally) wins"<<endl;
 }
 void display(char sequence[9]){
