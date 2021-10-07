@@ -5,6 +5,7 @@
 #include <cctype>
 #include <algorithm>
 #include <string>
+#include <iomanip>
 using namespace std;
 
 char selection='o';
@@ -117,13 +118,13 @@ void display(char sequence[9]){
 			cout<<"_________|_________|_________"<<endl;
 		}
 		else if(i%3!=0 && (i+1)%3!=0){
-			cout<<"	 |	   |	"<<endl;
+			cout<< setw(10) << right << "|" << setw(10) << right << "|" << endl;
 		}
 		else if(i%3!=0 && (i+1)%3==0){
-			cout<<"    "<<sequence[i-2]<<"    |    "<<sequence[i-1]<<"    |    "<<sequence[i]<<"    "<<endl;
+			cout<< setw(5) << right <<sequence[i-2] << setw(5) << right <<"|"<< setw(5) << right << sequence[i-1]<< setw(5) << right  << "|"<< setw(5) << right << sequence[i]<< setw(5) << right << "" <<endl;
 		}
 		if(i==9){
-			cout<<"	 |	   |	 ";
+			cout<< setw(10) << right << "|" << setw(10) << right << "|" << endl; 
 		}
 	}cout<<endl;
 }
@@ -508,4 +509,12 @@ void match_result(int value){
 		cout<<"TIE";
 	}
 }
-
+void clear_screen()
+{
+  #ifdef WINDOWS
+      std::system("cls");
+  #else
+      // Assume POSIX
+      std::system ("clear");
+  #endif
+}
